@@ -46,7 +46,7 @@ create table contratados(
 );
 
 create table dependentes (
-	id_dependentes serial primary key,
+	id_dependente serial primary key,
 	id_contratado int references contratados(id_contratado),
 	nome_dependente varchar(100),
 	parentesco varchar(20)
@@ -273,6 +273,14 @@ from cursos_disciplinas cd
 inner join cursos c on c.id_curso =cd.id_curso 
 inner join disciplinas d on d.id_disciplina = cd.id_disciplina ;
 
+--exibir dependentes 
+create or replace view  lista_dependentes as
+select d.nome_dependente,
+d.parentesco, c.id_contratado from dependentes d
+inner join contratados c on c.id_contratado = d.id_contratado;
+
+
+--select * from lista_dependentes;
 --select  * from grade_materias_alunos;
 --select  * from grade_materias_alunos where matricula_aluno =1;
 
