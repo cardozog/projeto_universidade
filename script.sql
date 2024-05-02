@@ -175,6 +175,7 @@ insert into turmas (matricula_professor, id_disciplina, id_horario,id_unidade) v
 
 insert into alunos_turmas (id_turma, matricula_aluno) values
 (1, 1),
+(2, 1),
 (2, 2),
 (3, 3),
 (4, 4),
@@ -188,14 +189,11 @@ insert into cursos_disciplinas (id_curso,id_disciplina) values
 (4,4),
 (5,5);
 
-select * from disciplinas d;
-select * from cursos;
 
-insert into alunos_turmas (id_turma, matricula_aluno) values (2,1);
--- criando views para os comandos select
+---- criando views para os comandos select
 
-
---exibir quadro de horários geral para todas as unidades  
+--exibir quadro de horários geral para todas as unidades 
+create or replace view quadro_horarios as 
 select 
 	t.id_turma,
 	d.nome_disciplina as disciplina,
