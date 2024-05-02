@@ -79,7 +79,7 @@ create table turmas(
 create table cursos_disciplinas(
 id_curso int references cursos(id_curso),
 id_disciplina int references disciplinas(id_disciplina),
-primary key(id_curso,id_disciplina))
+primary key(id_curso,id_disciplina));
 
 create table alunos_turmas(
 	id_turma int references turmas(id_turma),
@@ -262,7 +262,6 @@ select
 	a.mensalidade
 	from alunos a
 	inner join cursos c on a.id_curso = c.id_curso;
-drop view lista_alunos ;
 
 -- listar disciplinas com base no curso
 create or replace view disciplinas_por_curso as 
@@ -274,12 +273,12 @@ from cursos_disciplinas cd
 inner join cursos c on c.id_curso =cd.id_curso 
 inner join disciplinas d on d.id_disciplina = cd.id_disciplina ;
 
-select  * from grade_materias_alunos;
-select  * from grade_materias_alunos where matricula_aluno =1;
+--select  * from grade_materias_alunos;
+--select  * from grade_materias_alunos where matricula_aluno =1;
 
-select * from lista_alunos;
-select * from lista_funcionarios;
-select * from lista_professores;
-select * from disciplinas_por_curso;
+--select * from lista_alunos;
+--select * from lista_funcionarios;
+--select * from lista_professores;
+--select * from disciplinas_por_curso;
 
 
