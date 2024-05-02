@@ -76,6 +76,11 @@ create table turmas(
 	id_unidade int references unidades_academicas(id_unidade)
 );
 
+create table cursos_disciplinas(
+id_curso int references cursos(id_curso),
+id_disciplina int references disciplinas(id_disciplina),
+primary key(id_curso,id_disciplina))
+
 create table alunos_turmas(
 	id_turma int references turmas(id_turma),
 	matricula_aluno int references alunos(matricula_aluno),
@@ -175,6 +180,17 @@ insert into alunos_turmas (id_turma, matricula_aluno) values
 (4, 4),
 (5, 5);
 
+insert into cursos_disciplinas (id_curso,id_disciplina) values
+(1,1),
+(1,2),
+(2,2),
+(3,3),
+(4,4),
+(5,5);
+
+select * from disciplinas d;
+select * from cursos;
+
 insert into alunos_turmas (id_turma, matricula_aluno) values (2,1);
 -- criando views para os comandos select
 
@@ -248,11 +264,22 @@ select
 	inner join cursos c on a.id_curso = c.id_curso;
 drop view lista_alunos ;
 
+-- listar disciplinas com base no curso
+create or replace view disciplinas_por_curso as 
+select 
+	c.id_curso,
+	c.nome_curso,
+	d.nome_disciplina
+from cursos_disciplinas cd 
+inner join cursos c on c.id_curso =cd.id_curso 
+inner join disciplinas d on d.id_disciplina = cd.id_disciplina ;
+
 select  * from grade_materias_alunos;
 select  * from grade_materias_alunos where matricula_aluno =1;
 
 select * from lista_alunos;
 select * from lista_funcionarios;
 select * from lista_professores;
+select * from disciplinas_por_curso;
 
 
