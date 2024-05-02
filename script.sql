@@ -1,4 +1,9 @@
 
+create table cursos(
+id_curso serial primary key,
+nome_curso varchar(80)
+);
+
 create table horarios(
 	id_horario serial primary key,
 	horario time,
@@ -24,6 +29,7 @@ create table funcoes(
 
 create table alunos(
 	matricula_aluno serial primary key,
+	id_curso int references cursos(id_curso),
 	nome_completo varchar(100),
 	email varchar(100),
 	mensalidade decimal(10,2)
@@ -77,6 +83,13 @@ create table alunos_turmas(
 );
 
 --populando todas as tabelas
+	insert into cursos (nome_curso) values
+	('Ciência da Computação'),
+	('Engenharia Civil'),
+	('Letras'),
+	('Medicina'),
+	('Ciências Sociais');
+
 insert into horarios (horario, dia_semana) values
 ('08:00:00', 'Segunda-feira'),
 ('10:00:00', 'Terça-feira'),
@@ -105,12 +118,12 @@ insert into funcoes (nome_funcao) values
 ('Coordenador'),
 ('Secretário');
 
-insert into alunos (nome_completo, email, mensalidade) values
-('João Silva', 'joao.silva@example.com', 500.00),
-('Maria Santos', 'maria.santos@example.com', 550.00),
-('Pedro Oliveira', 'pedro.oliveira@example.com', 520.00),
-('Ana Souza', 'ana.souza@example.com', 530.00),
-('Carlos Pereira', 'carlos.pereira@example.com', 540.00);
+insert into alunos (id_curso,nome_completo, email, mensalidade) values
+(1,'João Silva', 'joao.silva@example.com', 500.00),
+(2,'Maria Santos', 'maria.santos@example.com', 550.00),
+(3,'Pedro Oliveira', 'pedro.oliveira@example.com', 520.00),
+(4,'Ana Souza', 'ana.souza@example.com', 530.00),
+(5,'Carlos Pereira', 'carlos.pereira@example.com', 540.00);
 
 insert into contratados (id_unidade, data_inicio, nome_completo, email, salario) values
 (1, '2023-01-15', 'José Costa', 'jose.costa@example.com', 3000.00),
@@ -161,3 +174,85 @@ insert into alunos_turmas (id_turma, matricula_aluno) values
 (3, 3),
 (4, 4),
 (5, 5);
+
+insert into alunos_turmas (id_turma, matricula_aluno) values (2,1);
+-- criando views para os comandos select
+
+
+--exibir quadro de horários geral para todas as unidades  
+select 
+	t.id_turma,
+	d.nome_disciplina as disciplina,
+	u.nome_unidade,
+	c.nome_completo as professor, 
+	h.dia_semana,
+	h.horario 
+from turmas t
+	inner join disciplinas d on t.id_disciplina = d.id_disciplina
+	inner join professores p on t.matricula_professor = p.matricula_professor 
+	inner join contratados c on p.id_contratado = c.id_contratado 
+	inner join unidades_academicas u on c.id_unidade = u.id_unidade 
+	inner join horarios h on t.id_horario = h.id_horario ;
+
+
+
+--exibir grade de matérias dos alunos
+create or replace view grade_materias_alunos as 
+select 
+	a.matricula_aluno, 
+	d.nome_disciplina, 
+	u.nome_unidade,
+	concat (h.dia_semana, ' - ' ,h.horario ) as "Horário"
+from turmas t
+	inner join alunos_turmas on alunos_turmas.id_turma = t.id_turma
+	inner join alunos a on a.matricula_aluno = alunos_turmas.matricula_aluno
+	inner join unidades_academicas u on u.id_unidade = t.id_unidade
+	inner join horarios h on h.id_horario = t.id_horario
+	inner join disciplinas d on d.id_disciplina = t.id_disciplina
+	order by matricula_aluno;
+
+--exibir lista de professores da universidade
+create or replace view lista_professores as
+select 
+	p.matricula_professor as "Matrícula",
+	c.nome_completo as "Nome",
+	formacao as "Formação",
+	u.nome_unidade as "Unidade" 
+	from professores p 
+inner join contratados c on p.id_contratado = c.id_contratado 
+inner join unidades_academicas u on c.id_unidade = u.id_unidade;
+
+
+-- exibir lista de funcionarios da universidade
+create or replace view lista_funcionarios as
+select 
+	f.matricula_funcionario as "Matrícula",
+	c.nome_completo as "Nome", 
+	funcoes.nome_funcao as "Função",
+	u.nome_unidade as "Unidade" 
+from funcionarios f 
+	inner join contratados c on f.id_contratado =c.id_contratado 
+	inner join funcoes on funcoes.id_funcao = f.id_funcao
+	inner join unidades_academicas u on c.id_unidade = u.id_unidade ;
+
+
+-- exibir lista de alunos da universidade
+create or replace view lista_alunos as
+select 
+	a.matricula_aluno,
+	c.nome_curso,
+	a.nome_completo, 
+	a.email,
+	a.mensalidade
+	from alunos a
+	inner join cursos c on a.id_curso = c.id_curso;
+drop view lista_alunos ;
+
+select  * from grade_materias_alunos;
+select  * from grade_materias_alunos where matricula_aluno =1;
+
+select * from lista_alunos;
+select * from lista_funcionarios;
+select * from lista_professores;
+
+
