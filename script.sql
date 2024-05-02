@@ -1,7 +1,8 @@
+
 create table horarios(
 	id_horario serial primary key,
-	dia_semana varchar(20),
-	horario time
+	horario time,
+	dia_semana varchar(20)
 );
 
 create table unidades_academicas (
@@ -14,52 +15,61 @@ create table disciplinas(
 	nome_disciplina varchar(50)
 );
 
+create table funcoes(
+	id_funcao serial primary key,
+	nome_funcao varchar(20)
+);
+
+
 create table alunos(
 	matricula_aluno serial primary key,
 	nome_completo varchar(100),
 	email varchar(100),
-	valor_mensalidade decimal(10,2),
-	id_unidade int,
-	constraint fk_id_unidade foreign key (id_unidade) references unidades_academicas(id_unidade)
+	mensalidade decimal(10,2)
 );
 
+
+create table contratados(
+	id_contratado serial primary key,
+	id_unidade int references unidades_academicas(id_unidade),
+	data_inicio date,
+	nome_completo varchar(100),
+	email varchar(100) ,
+	salario decimal(10,2)
+);
+
+create table dependentes (
+	id_dependentes serial primary key,
+	id_contratado int references contratados(id_contratado),
+	nome_dependente varchar(100),
+	parentesco varchar(20)
+	
+)
 
 
 create table professores(
 	matricula_professor serial primary key,
-	nome_completo varchar(100),
-	email varchar(100) ,
-	salario decimal(10,2),
-	formacao varchar(30),
-	data_inicio date,
-	id_unidade int,
-	constraint fk_id_unidade foreign key (id_unidade) references unidades_academicas(id_unidade)
+	id_contratado int references contratados(id_contratado),
+	formacao varchar(30)
 );
 
 create table funcionarios(
 	matricula_funcionario serial primary key,
-	nome_completo varchar(100),
-	email varchar(100),
-	salario decimal(10,2),
-	funcao varchar(50),
-	data_inicio date,
-	id_unidade int,
-	constraint fk_id_unidade foreign key (id_unidade) references unidades_academicas(id_unidade)
+	id_contratado int references contratados(id_contratado),
+	id_funcao int references funcoes(id_funcao)
 );
+
 
 create table turmas(
 	id_turma serial primary key,
-	id_disciplina int,
-	id_horario int,
-	matricula_professor int,
-	constraint fk_matricula_professor foreign key(matricula_professor) references professores,
-	constraint fk_id_horario foreign key(id_horario) references horarios,
-	constraint fk_id_disciplina foreign key(id_disciplina) references disciplinas
+	matricula_professor int references professores(matricula_professor),
+	id_disciplina int references disciplinas(id_disciplina),
+	id_horario int references horarios(id_horario)
 );
 
 create table alunos_turmas(
-	id_turma int,
-	matricula_aluno int,
+	id_turma int references turmas(id_turma),
+	matricula_aluno int references alunos(matricula_aluno),
 	primary key(id_turma, matricula_aluno)
 );
 
