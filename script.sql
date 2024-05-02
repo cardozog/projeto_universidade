@@ -7,8 +7,9 @@ create table horarios(
 
 create table unidades_academicas (
 	id_unidade serial primary key,
-	nome_unidade varchar(20)
+	nome_unidade varchar(80)
 );
+
 
 create table disciplinas(
 	id_disciplina serial primary key, 
@@ -17,7 +18,7 @@ create table disciplinas(
 
 create table funcoes(
 	id_funcao serial primary key,
-	nome_funcao varchar(20)
+	nome_funcao varchar(80)
 );
 
 
@@ -44,14 +45,15 @@ create table dependentes (
 	nome_dependente varchar(100),
 	parentesco varchar(20)
 	
-)
+);
 
 
 create table professores(
 	matricula_professor serial primary key,
 	id_contratado int references contratados(id_contratado),
-	formacao varchar(30)
+	formacao varchar(80)
 );
+
 
 create table funcionarios(
 	matricula_funcionario serial primary key,
@@ -64,7 +66,8 @@ create table turmas(
 	id_turma serial primary key,
 	matricula_professor int references professores(matricula_professor),
 	id_disciplina int references disciplinas(id_disciplina),
-	id_horario int references horarios(id_horario)
+	id_horario int references horarios(id_horario),
+	id_unidade int references unidades_academicas(id_unidade)
 );
 
 create table alunos_turmas(
@@ -73,4 +76,88 @@ create table alunos_turmas(
 	primary key(id_turma, matricula_aluno)
 );
 
+--populando todas as tabelas
+insert into horarios (horario, dia_semana) values
+('08:00:00', 'Segunda-feira'),
+('10:00:00', 'Terça-feira'),
+('13:00:00', 'Quarta-feira'),
+('15:00:00', 'Quinta-feira'),
+('17:00:00', 'Sexta-feira');
 
+insert into unidades_academicas (nome_unidade) values
+('Instituto de Ciências da Computação'),
+('Faculdade de Engenharia'),
+('Instituto de Letras'),
+('Escola de Medicina'),
+('Centro de Ciências Sociais');
+
+insert into disciplinas (nome_disciplina) values
+('Algoritmos e Estruturas de Dados'),
+('Cálculo I'),
+('Literatura Brasileira'),
+('Anatomia Humana'),
+('Economia');
+
+insert into funcoes (nome_funcao) values
+('Limpeza'),
+('Administrativo'),
+('Técnico'),
+('Coordenador'),
+('Secretário');
+
+insert into alunos (nome_completo, email, mensalidade) values
+('João Silva', 'joao.silva@example.com', 500.00),
+('Maria Santos', 'maria.santos@example.com', 550.00),
+('Pedro Oliveira', 'pedro.oliveira@example.com', 520.00),
+('Ana Souza', 'ana.souza@example.com', 530.00),
+('Carlos Pereira', 'carlos.pereira@example.com', 540.00);
+
+insert into contratados (id_unidade, data_inicio, nome_completo, email, salario) values
+(1, '2023-01-15', 'José Costa', 'jose.costa@example.com', 3000.00),
+(2, '2022-08-20', 'Fernanda Lima', 'fernanda.lima@example.com', 3200.00),
+(3, '2023-03-10', 'Roberto Almeida', 'roberto.almeida@example.com', 2800.00),
+(4, '2023-05-05', 'Aline Oliveira', 'aline.oliveira@example.com', 3500.00),
+(5, '2022-11-30', 'Paulo Santos', 'paulo.santos@example.com', 3300.00),
+(1, '2023-02-10', 'Mariana Oliveira', 'mariana.oliveira@example.com', 2900.00),
+(3, '2022-09-25', 'Lucas Martins', 'lucas.martins@example.com', 3100.00),
+(2, '2023-04-15', 'Fernando Pereira', 'fernando.pereira@example.com', 3300.00),
+(4, '2022-12-20', 'Juliana Costa', 'juliana.costa@example.com', 2800.00),
+(5, '2023-06-05', 'Gabriel Alves', 'gabriel.alves@example.com', 3200.00);
+
+
+
+insert into dependentes (id_contratado, nome_dependente, parentesco) values
+(1, 'Filipe Costa', 'Filho'),
+(4, 'Lúcia Oliveira', 'Esposa'),
+(5, 'Rafael Santos', 'Filho'),
+(3, 'Marcos Almeida', 'Filho'),
+(2, 'Laura Lima', 'Filha');
+
+insert into professores (id_contratado, formacao) values
+(1, 'Doutor em Ciência da Computação'),
+(2, 'Mestrado em Engenharia Civil'),
+(3, 'Doutorado em Letras'),
+(4, 'Mestrado em Medicina'),
+(5, 'Doutorado em Economia');
+
+
+INSERT INTO funcionarios (id_contratado, id_funcao) VALUES
+(6, 1),
+(7, 2),
+(8, 3),
+(9, 2),
+(10, 4);
+
+insert into turmas (matricula_professor, id_disciplina, id_horario,id_unidade) values
+(1, 1, 1, 1),
+(2, 2, 2, 2),
+(3, 3, 3, 3),
+(4, 4, 4, 4),
+(5, 5, 5, 5);
+
+insert into alunos_turmas (id_turma, matricula_aluno) values
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5);
